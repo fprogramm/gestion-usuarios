@@ -8,7 +8,11 @@
     "dev": "nodemon server.js",
     "build": "tailwindcss -i ./src/input.css -o ./public/styles.css --watch",
     "build-css": "tailwindcss -i ./src/input.css -o ./public/styles.css --minify",
-    "vercel-build": "npm run build-css"
+    "vercel-build": "npm run build-css",
+    "seed": "node scripts/seed.js",
+    "seed:admin": "node scripts/crear-admin.js",
+    "setup": "node scripts/setup-production.js",
+    "setup:interactive": "node scripts/setup-interactive.js"
   },
   "dependencies": {
     "express": "^4.18.2",
