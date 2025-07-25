@@ -5,7 +5,7 @@ const supabase = require('../src/config/database');
 const ADMIN_CONFIG = {
   nombre: 'Administrador',
   apellido: 'Sistema',
-  email: 'admin@sistema.com', // CAMBIAR POR TU EMAIL
+  email: 'soporte.liborina@gmail.com', // CAMBIAR POR TU EMAIL
   password: 'Admin123456!', // CAMBIAR POR UNA CONTRASEÑA SEGURA
   rol: 'Administrador'
 };
