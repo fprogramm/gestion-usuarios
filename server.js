@@ -97,7 +97,6 @@ app.get('*', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
-
 });
