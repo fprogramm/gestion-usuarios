@@ -20,10 +20,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Middleware para obtener IP real (solo en producción)
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', true);
-}
+// Middleware para obtener IP real (Vercel siempre usa proxy)
+app.set('trust proxy', true);
 
 // Rutas públicas de autenticación
 app.post('/api/auth/solicitar-token', authController.tokenRequestLimit, authController.solicitarToken);

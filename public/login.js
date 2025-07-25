@@ -79,7 +79,12 @@ async function solicitarToken(e) {
             mostrarMensaje('Token enviado correctamente. Revisa tu email.', 'success');
             iniciarTemporizador();
         } else {
-            mostrarMensaje(data.error || 'Error al enviar token', 'error');
+            // Manejar diferentes tipos de errores
+            let mensaje = data.error || 'Error al enviar token';
+            if (data.code === 'RATE_LIMIT_EXCEEDED') {
+                mensaje = 'Demasiados intentos. Espera 15 minutos antes de intentar de nuevo.';
+            }
+            mostrarMensaje(mensaje, 'error');
         }
 
     } catch (error) {
@@ -133,7 +138,14 @@ async function verificarToken(e) {
             }, 1500);
 
         } else {
-            mostrarMensaje(data.error || 'Token inválido o expirado', 'error');
+            // Manejar diferentes tipos de errores
+            let mensaje = data.error || 'Token inválido o expirado';
+            if (data.code === 'RATE_LIMIT_EXCEEDED') {
+                mensaje = 'Demasiados intentos de login. Espera 15 minutos.';
+            } else if (data.code === 'INVALID_TOKEN_FORMAT') {
+                mensaje = 'El token debe ser de 6 dígitos numéricos.';
+            }
+            mostrarMensaje(mensaje, 'error');
             tokenInput.value = '';
             tokenInput.focus();
         }

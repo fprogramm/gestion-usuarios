@@ -11,7 +11,11 @@ const tokenRequestLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: false, // Desactivar para desarrollo local
+  trustProxy: true, // Activar para Vercel
+  keyGenerator: (req) => {
+    // Usar IP real de Vercel
+    return req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  }
 });
 
 // Rate limiting para verificación de token
@@ -24,7 +28,11 @@ const tokenVerifyLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: false, // Desactivar para desarrollo local
+  trustProxy: true, // Activar para Vercel
+  keyGenerator: (req) => {
+    // Usar IP real de Vercel
+    return req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  }
 });
 
 const authController = {
@@ -53,10 +61,13 @@ const authController = {
         });
       }
 
-      const ipAddress = req.ip || req.connection.remoteAddress;
+      // Normalizar email (convertir a minúsculas)
+      const normalizedEmail = email.toLowerCase().trim();
+
+      const ipAddress = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
       const userAgent = req.get('User-Agent') || '';
 
-      const resultado = await authService.solicitarTokenLogin(email, ipAddress, userAgent);
+      const resultado = await authService.solicitarTokenLogin(normalizedEmail, ipAddress, userAgent);
       
       res.json({
         success: true,
@@ -93,10 +104,13 @@ const authController = {
         });
       }
 
-      const ipAddress = req.ip || req.connection.remoteAddress;
+      // Normalizar email
+      const normalizedEmail = email.toLowerCase().trim();
+
+      const ipAddress = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
       const userAgent = req.get('User-Agent') || '';
 
-      const resultado = await authService.verificarTokenLogin(email, token, ipAddress, userAgent);
+      const resultado = await authService.verificarTokenLogin(normalizedEmail, token, ipAddress, userAgent);
       
       res.json({
         success: true,

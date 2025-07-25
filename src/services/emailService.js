@@ -37,13 +37,14 @@ class EmailService {
       console.log(`📧 Para: ${email}`);
       console.log(`📧 Nombre: ${nombre}`);
       console.log(`📧 Token: ${token}`);
+      console.log('📧 Expira en: 15 minutos');
       console.log('📧 ═══════════════════════════════════════════════════════════════');
       console.log('📧 COPIA ESTE TOKEN PARA HACER LOGIN');
       console.log('📧 ═══════════════════════════════════════════════════════════════\n');
       
       return { 
         success: true, 
-        message: 'Token generado correctamente (modo demo - revisa la consola del servidor)' 
+        message: 'Token generado correctamente (modo demo - revisa los logs de Vercel)' 
       };
     }
 
