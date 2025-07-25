@@ -42,7 +42,7 @@ console.log('\n📧 Variables de email (opcionales):');
 let emailConfigured = true;
 optionalVars.forEach(varName => {
   const value = process.env[varName];
-  if (!value || value.includes('tu_') || value.includes('gmail')) {
+  if (!value || value.includes('tu_') || value.includes('tu_email@gmail.com') || value.includes('tu_app_password')) {
     console.log(`⚠️  ${varName}: No configurada (se usará modo demo)`);
     emailConfigured = false;
   } else {

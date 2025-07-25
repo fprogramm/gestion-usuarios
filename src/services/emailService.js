@@ -6,8 +6,10 @@ class EmailService {
     
     // Verificar si las credenciales están configuradas
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || 
-        process.env.EMAIL_PASS === 'tu_app_password_de_gmail') {
-      console.log('⚠️  Credenciales de email no configuradas, usando modo demo');
+        process.env.EMAIL_PASS === 'tu_app_password_de_gmail' ||
+        process.env.EMAIL_PASS === 'S0p0rt3$2024') {
+      console.log('⚠️  Credenciales de email no configuradas correctamente, usando modo demo');
+      console.log('💡 Para configurar Gmail, sigue la guía en GMAIL_SETUP.md');
       this.demoMode = true;
       return;
     }
@@ -20,6 +22,9 @@ class EmailService {
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS
+        },
+        tls: {
+          rejectUnauthorized: false // Solo para desarrollo
         }
       });
     } catch (error) {
@@ -131,7 +136,15 @@ class EmailService {
       return { success: true, message: 'Conexión de email verificada' };
     } catch (error) {
       console.error('Error verificando conexión de email:', error);
-      return { success: false, message: 'Error en conexión de email', error: error.message };
+      
+      let mensaje = 'Error en conexión de email';
+      if (error.code === 'EAUTH') {
+        mensaje = 'Error de autenticación: Verifica que uses una App Password de Gmail (no tu contraseña normal)';
+      } else if (error.code === 'ECONNECTION') {
+        mensaje = 'Error de conexión: Verifica la configuración del servidor SMTP';
+      }
+      
+      return { success: false, message: mensaje, error: error.message };
     }
   }
 }

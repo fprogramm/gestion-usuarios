@@ -15,7 +15,9 @@
     "setup:interactive": "node scripts/setup-interactive.js",
     "verify": "node scripts/verificar-config.js",
     "verify:vercel": "node scripts/verificar-vercel.js",
-    "verify:deploy": "node scripts/verificar-despliegue.js"
+    "verify:deploy": "node scripts/verificar-despliegue.js",
+    "verify:users": "node scripts/verificar-usuarios.js",
+    "test:email": "node scripts/test-email.js"
   },
   "dependencies": {
     "express": "^4.18.2",
