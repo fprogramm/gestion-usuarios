@@ -35,9 +35,23 @@ app.get('/api/health', (req, res) => {
   res.json({ message: 'API funcionando correctamente', timestamp: new Date().toISOString() });
 });
 
+// Ruta para servir la página principal
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// Ruta catch-all para servir archivos estáticos y SPA
+app.get('*', (req, res) => {
+  // Si es una ruta de API que no existe, devolver 404
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // Para cualquier otra ruta, servir la página principal
+  res.sendFile(__dirname + '/public/index.html');
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
-  console.log(`Panel de administración: http://localhost:${PORT}`);
-  console.log(`Acceso en red local: http://[tu-ip-local]:${PORT}`);
-  console.log(`Para encontrar tu IP local ejecuta: ipconfig (Windows) o ifconfig (Mac/Linux)`);
+
 });
