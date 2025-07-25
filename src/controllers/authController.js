@@ -11,6 +11,7 @@ const tokenRequestLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: false, // Desactivar para desarrollo local
 });
 
 // Rate limiting para verificación de token
@@ -23,6 +24,7 @@ const tokenVerifyLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: false, // Desactivar para desarrollo local
 });
 
 const authController = {

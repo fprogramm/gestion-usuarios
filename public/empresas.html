@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Empresas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-light text-white mb-2">Gestión de Empresas</h1>
+            <p class="text-gray-400">Administración de empresas del sistema</p>
+        </header>
+        
+        <!-- Navegación -->
+        <nav class="mb-6">
+            <div class="flex gap-4 justify-center">
+                <a href="/" class="btn btn-secondary">👥 Usuarios</a>
+                <a href="/empresas.html" class="btn btn-primary">🏢 Empresas</a>
+                <a href="/clientes.html" class="btn btn-secondary">👤 Clientes</a>
+            </div>
+        </nav>
+
+        <!-- Estadísticas -->
+        <div id="estadisticas" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <!-- Se llenarán dinámicamente -->
+        </div>
+        
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <button id="btnAgregar" class="btn btn-primary flex items-center gap-2">
+                <span class="text-lg">+</span> AGREGAR EMPRESA
+            </button>
+            
+            <div class="flex items-center gap-2">
+                <input type="text" id="searchInput" placeholder="Buscar empresa..." 
+                       class="form-input w-64">
+                <button id="btnBuscar" class="btn btn-success px-4">
+                    🔍
+                </button>
+            </div>
+            
+            <div class="text-gray-400">
+                <span>Resultados: <span id="resultCount" class="text-white font-semibold">0</span></span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="overflow-x-auto">
+                <table id="empresasTable" class="w-full">
+                    <thead class="bg-gray-700">
+                        <tr>
+                            <th class="px-4 py-3 text-left">
+                                <input type="checkbox" id="selectAll" class="rounded bg-gray-600 border-gray-500">
+                            </th>
+                            <th class="px-4 py-3 text-left font-semibold">Acción</th>
+                            <th class="px-4 py-3 text-left font-semibold">ID</th>
+                            <th class="px-4 py-3 text-left font-semibold">Nombre</th>
+                            <th class="px-4 py-3 text-left font-semibold">NIT</th>
+                            <th class="px-4 py-3 text-left font-semibold">Ciudad</th>
+                            <th class="px-4 py-3 text-left font-semibold">Teléfono</th>
+                            <th class="px-4 py-3 text-left font-semibold">Clientes</th>
+                            <th class="px-4 py-3 text-left font-semibold">Estado</th>
+                            <th class="px-4 py-3 text-left font-semibold">Fecha Registro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="empresasBody" class="divide-y divide-gray-700">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <button id="btnEliminarSeleccionados" class="btn btn-danger" style="display: none;">
+                🗑️ ELIMINAR EMPRESAS SELECCIONADAS
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar empresa -->
+    <div id="modalEmpresa" class="modal-overlay" style="display: none;">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitle" class="text-2xl font-semibold text-white">Agregar Empresa</h2>
+                <span class="close text-gray-400 hover:text-white text-3xl cursor-pointer">&times;</span>
+            </div>
+            
+            <form id="formEmpresa" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="nombre" class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Empresa *:</label>
+                        <input type="text" id="nombre" name="nombre" required class="form-input">
+                    </div>
+                    <div>
+                        <label for="razon_social" class="block text-sm font-medium text-gray-300 mb-2">Razón Social:</label>
+                        <input type="text" id="razon_social" name="razon_social" class="form-input">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="nit" class="block text-sm font-medium text-gray-300 mb-2">NIT:</label>
+                        <input type="text" id="nit" name="nit" class="form-input">
+                    </div>
+                    <div>
+                        <label for="telefono" class="block text-sm font-medium text-gray-300 mb-2">Teléfono:</label>
+                        <input type="tel" id="telefono" name="telefono" class="form-input">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email:</label>
+                    <input type="email" id="email" name="email" class="form-input">
+                </div>
+                
+                <div>
+                    <label for="direccion" class="block text-sm font-medium text-gray-300 mb-2">Dirección:</label>
+                    <textarea id="direccion" name="direccion" rows="2" class="form-input"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="ciudad" class="block text-sm font-medium text-gray-300 mb-2">Ciudad:</label>
+                        <input type="text" id="ciudad" name="ciudad" class="form-input">
+                    </div>
+                    <div>
+                        <label for="pais" class="block text-sm font-medium text-gray-300 mb-2">País:</label>
+                        <input type="text" id="pais" name="pais" value="Colombia" class="form-input">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="sitio_web" class="block text-sm font-medium text-gray-300 mb-2">Sitio Web:</label>
+                    <input type="url" id="sitio_web" name="sitio_web" placeholder="https://ejemplo.com" class="form-input">
+                </div>
+
+                <div>
+                    <label for="notas" class="block text-sm font-medium text-gray-300 mb-2">Notas:</label>
+                    <textarea id="notas" name="notas" rows="3" class="form-input"></textarea>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="activa" name="activa" checked 
+                           class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
+                    <label for="activa" class="ml-2 text-sm text-gray-300">Empresa activa</label>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensajes de estado -->
+    <div id="mensajes" class="fixed top-4 right-4 z-50"></div>
+
+    <script src="empresas.js"></script>
+</body>
+</html>

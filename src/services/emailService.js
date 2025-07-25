@@ -2,18 +2,52 @@ const nodemailer = require('nodemailer');
 
 class EmailService {
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT) || 587,
-      secure: false, // true para 465, false para otros puertos
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
+    this.demoMode = false;
+    
+    // Verificar si las credenciales están configuradas
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || 
+        process.env.EMAIL_PASS === 'tu_app_password_de_gmail') {
+      console.log('⚠️  Credenciales de email no configuradas, usando modo demo');
+      this.demoMode = true;
+      return;
+    }
+
+    try {
+      this.transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: parseInt(process.env.EMAIL_PORT) || 587,
+        secure: false, // true para 465, false para otros puertos
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
+      });
+    } catch (error) {
+      console.log('⚠️  Error configurando transporter, usando modo demo:', error.message);
+      this.demoMode = true;
+    }
   }
 
   async enviarTokenLogin(email, token, nombre) {
+    // Modo demo - mostrar token en consola
+    if (this.demoMode) {
+      console.log('\n📧 ═══════════════════════════════════════════════════════════════');
+      console.log('📧 EMAIL SIMULADO - TOKEN DE ACCESO');
+      console.log('📧 ═══════════════════════════════════════════════════════════════');
+      console.log(`📧 Para: ${email}`);
+      console.log(`📧 Nombre: ${nombre}`);
+      console.log(`📧 Token: ${token}`);
+      console.log('📧 ═══════════════════════════════════════════════════════════════');
+      console.log('📧 COPIA ESTE TOKEN PARA HACER LOGIN');
+      console.log('📧 ═══════════════════════════════════════════════════════════════\n');
+      
+      return { 
+        success: true, 
+        message: 'Token generado correctamente (modo demo - revisa la consola del servidor)' 
+      };
+    }
+
+    // Modo real - enviar email
     const mailOptions = {
       from: `"Sistema de Gestión" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -84,6 +118,13 @@ class EmailService {
   }
 
   async verificarConexion() {
+    if (this.demoMode) {
+      return { 
+        success: true, 
+        message: 'Conexión de email verificada (modo demo)' 
+      };
+    }
+
     try {
       await this.transporter.verify();
       return { success: true, message: 'Conexión de email verificada' };

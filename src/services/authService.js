@@ -1,7 +1,15 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const supabase = require('../config/database');
-const emailService = require('./emailService');
+
+// Intentar usar el servicio de email real, si falla usar el demo
+let emailService;
+try {
+  emailService = require('./emailService');
+} catch (error) {
+  console.log('⚠️  Usando servicio de email demo');
+  emailService = require('./emailServiceDemo');
+}
 
 class AuthService {
   // Generar token aleatorio de 6 dígitos

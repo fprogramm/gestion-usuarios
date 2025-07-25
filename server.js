@@ -6,6 +6,8 @@ require('dotenv').config();
 const usuarioController = require('./src/controllers/usuarioController');
 const rolController = require('./src/controllers/rolController');
 const authController = require('./src/controllers/authController');
+const empresaController = require('./src/controllers/empresaController');
+const clienteController = require('./src/controllers/clienteController');
 
 // Importar middleware
 const { verificarAuth, verificarAdmin, verificarAdminOEditor } = require('./src/middleware/authMiddleware');
@@ -18,8 +20,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Middleware para obtener IP real
-app.set('trust proxy', true);
+// Middleware para obtener IP real (solo en producción)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', true);
+}
 
 // Rutas públicas de autenticación
 app.post('/api/auth/solicitar-token', authController.tokenRequestLimit, authController.solicitarToken);
@@ -44,6 +48,25 @@ app.get('/api/roles/:id', verificarAuth, rolController.obtenerPorId);
 app.post('/api/roles', verificarAuth, verificarAdmin, rolController.crear);
 app.put('/api/roles/:id', verificarAuth, verificarAdmin, rolController.actualizar);
 app.delete('/api/roles/:id', verificarAuth, verificarAdmin, rolController.eliminar);
+
+// Rutas protegidas de empresas (requieren autenticación)
+app.get('/api/empresas', verificarAuth, empresaController.obtenerTodas);
+app.get('/api/empresas/estadisticas', verificarAuth, empresaController.obtenerEstadisticas);
+app.get('/api/empresas/:id', verificarAuth, empresaController.obtenerPorId);
+app.post('/api/empresas', verificarAuth, verificarAdminOEditor, empresaController.crear);
+app.put('/api/empresas/:id', verificarAuth, verificarAdminOEditor, empresaController.actualizar);
+app.delete('/api/empresas/:id', verificarAuth, verificarAdmin, empresaController.eliminar);
+app.delete('/api/empresas', verificarAuth, verificarAdmin, empresaController.eliminarMultiples);
+
+// Rutas protegidas de clientes (requieren autenticación)
+app.get('/api/clientes', verificarAuth, clienteController.obtenerTodos);
+app.get('/api/clientes/estadisticas', verificarAuth, clienteController.obtenerEstadisticas);
+app.get('/api/clientes/empresa/:empresaId', verificarAuth, clienteController.obtenerPorEmpresa);
+app.get('/api/clientes/:id', verificarAuth, clienteController.obtenerPorId);
+app.post('/api/clientes', verificarAuth, verificarAdminOEditor, clienteController.crear);
+app.put('/api/clientes/:id', verificarAuth, verificarAdminOEditor, clienteController.actualizar);
+app.delete('/api/clientes/:id', verificarAuth, verificarAdminOEditor, clienteController.eliminar);
+app.delete('/api/clientes', verificarAuth, verificarAdmin, clienteController.eliminarMultiples);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {
