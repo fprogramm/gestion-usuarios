@@ -6,97 +6,111 @@
     <title>Gestión de Usuarios</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Gestión de Usuarios</h1>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-light text-white mb-2">Gestión de Usuarios</h1>
+            <p class="text-gray-400">Sistema de administración de usuarios y roles</p>
         </header>
         
-        <div class="controls">
-            <button id="btnAgregar" class="btn btn-primary">
-                <span>+</span> AGREGAR NUEVO
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <button id="btnAgregar" class="btn btn-primary flex items-center gap-2">
+                <span class="text-lg">+</span> AGREGAR NUEVO
             </button>
             
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Buscar por apellido">
-                <button id="btnBuscar" class="btn btn-search">🔍</button>
+            <div class="flex items-center gap-2">
+                <input type="text" id="searchInput" placeholder="Buscar por apellido, nombre o email" 
+                       class="form-input w-64">
+                <button id="btnBuscar" class="btn btn-success px-4">
+                    🔍
+                </button>
             </div>
             
-            <div class="results-info">
-                <span>Resultados: <span id="resultCount">0</span></span>
+            <div class="text-gray-400">
+                <span>Resultados: <span id="resultCount" class="text-white font-semibold">0</span></span>
             </div>
         </div>
         
         <div class="table-container">
-            <table id="usuariosTable">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="selectAll"></th>
-                        <th>Acción</th>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Email</th>
-                        <th>Rol</th>
-                        <th>Estado</th>
-                        <th>Última actualización</th>
-                        <th>Ver</th>
-                    </tr>
-                </thead>
-                <tbody id="usuariosBody">
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table id="usuariosTable" class="w-full">
+                    <thead class="bg-gray-700">
+                        <tr>
+                            <th class="px-4 py-3 text-left">
+                                <input type="checkbox" id="selectAll" class="rounded bg-gray-600 border-gray-500">
+                            </th>
+                            <th class="px-4 py-3 text-left font-semibold">Acción</th>
+                            <th class="px-4 py-3 text-left font-semibold">ID</th>
+                            <th class="px-4 py-3 text-left font-semibold">Nombre</th>
+                            <th class="px-4 py-3 text-left font-semibold">Apellido</th>
+                            <th class="px-4 py-3 text-left font-semibold">Email</th>
+                            <th class="px-4 py-3 text-left font-semibold">Rol</th>
+                            <th class="px-4 py-3 text-left font-semibold">Estado</th>
+                            <th class="px-4 py-3 text-left font-semibold">Última actualización</th>
+                            <th class="px-4 py-3 text-left font-semibold">Ver</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosBody" class="divide-y divide-gray-700">
+                    </tbody>
+                </table>
+            </div>
         </div>
         
-        <div class="bulk-actions">
+        <div class="mt-6 text-center">
             <button id="btnEliminarSeleccionados" class="btn btn-danger" style="display: none;">
-                ELIMINAR REGISTROS SELECCIONADOS
+                🗑️ ELIMINAR REGISTROS SELECCIONADOS
             </button>
         </div>
     </div>
 
     <!-- Modal para agregar/editar usuario -->
-    <div id="modalUsuario" class="modal">
+    <div id="modalUsuario" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modalTitle">Agregar Usuario</h2>
-            <form id="formUsuario">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" required>
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitle" class="text-2xl font-semibold text-white">Agregar Usuario</h2>
+                <span class="close text-gray-400 hover:text-white text-3xl cursor-pointer">&times;</span>
+            </div>
+            
+            <form id="formUsuario" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="nombre" class="block text-sm font-medium text-gray-300 mb-2">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" required class="form-input">
                     </div>
-                    <div class="form-group">
-                        <label for="apellido">Apellido:</label>
-                        <input type="text" id="apellido" name="apellido" required>
+                    <div>
+                        <label for="apellido" class="block text-sm font-medium text-gray-300 mb-2">Apellido:</label>
+                        <input type="text" id="apellido" name="apellido" required class="form-input">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email:</label>
+                    <input type="email" id="email" name="email" required class="form-input">
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="password">Contraseña:</label>
-                        <input type="password" id="password" name="password">
-                        <small class="form-help">Mínimo 6 caracteres. Dejar vacío para mantener la actual (solo edición)</small>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Contraseña:</label>
+                        <input type="password" id="password" name="password" class="form-input">
+                        <small class="text-xs text-gray-400 mt-1 block">Mínimo 6 caracteres. Dejar vacío para mantener la actual (solo edición)</small>
                     </div>
-                    <div class="form-group">
-                        <label for="rol_id">Rol:</label>
-                        <select id="rol_id" name="rol_id" required>
+                    <div>
+                        <label for="rol_id" class="block text-sm font-medium text-gray-300 mb-2">Rol:</label>
+                        <select id="rol_id" name="rol_id" required class="form-select">
                             <option value="">Seleccionar rol...</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="activo" name="activo" checked>
-                        Usuario activo
-                    </label>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="activo" name="activo" checked 
+                           class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
+                    <label for="activo" class="ml-2 text-sm text-gray-300">Usuario activo</label>
                 </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                
+                <div class="flex justify-end gap-3 pt-4">
                     <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
         </div>

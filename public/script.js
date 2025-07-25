@@ -98,30 +98,37 @@ function renderizarTabla() {
         const estadoClase = usuario.activo ? 'status-active' : 'status-inactive';
         
         row.innerHTML = `
-            <td class="checkbox-cell">
-                <input type="checkbox" class="row-checkbox" value="${usuario.id}">
+            <td class="px-4 py-3">
+                <input type="checkbox" class="row-checkbox rounded bg-gray-600 border-gray-500" value="${usuario.id}">
             </td>
-            <td>
-                <div class="action-buttons">
+            <td class="px-4 py-3">
+                <div class="flex gap-1">
                     <button class="btn-action btn-view" onclick="verUsuario(${usuario.id})" title="Ver">👁️</button>
                     <button class="btn-action btn-edit" onclick="editarUsuario(${usuario.id})" title="Editar">✏️</button>
                     <button class="btn-action btn-delete" onclick="eliminarUsuario(${usuario.id})" title="Eliminar">🗑️</button>
                 </div>
             </td>
-            <td>${usuario.id}</td>
-            <td>${usuario.nombre}</td>
-            <td>${usuario.apellido}</td>
-            <td>${usuario.email}</td>
-            <td>${rolNombre}</td>
-            <td>
-                <span class="status-indicator ${estadoClase}"></span>
-                ${estadoTexto}
+            <td class="px-4 py-3 text-gray-300">${usuario.id}</td>
+            <td class="px-4 py-3 font-medium">${usuario.nombre}</td>
+            <td class="px-4 py-3 font-medium">${usuario.apellido}</td>
+            <td class="px-4 py-3 text-blue-400">${usuario.email}</td>
+            <td class="px-4 py-3">
+                <span class="px-2 py-1 text-xs rounded-full bg-purple-600 text-white">${rolNombre}</span>
             </td>
-            <td>${fechaActualizacion}</td>
-            <td>
-                <button class="btn-action btn-view" onclick="verUsuario(${usuario.id})">Ver</button>
+            <td class="px-4 py-3">
+                <div class="flex items-center">
+                    <span class="status-indicator ${estadoClase}"></span>
+                    <span class="text-sm">${estadoTexto}</span>
+                </div>
+            </td>
+            <td class="px-4 py-3 text-gray-400 text-sm">${fechaActualizacion}</td>
+            <td class="px-4 py-3">
+                <button class="btn-action btn-view text-xs" onclick="verUsuario(${usuario.id})">Ver</button>
             </td>
         `;
+        
+        // Agregar hover effect a la fila
+        row.className = "hover:bg-gray-750 transition-colors duration-200";
         usuariosBody.appendChild(row);
     });
     
@@ -145,24 +152,12 @@ function abrirModal(usuario = null) {
         document.getElementById('password').value = '';
         document.getElementById('rol_id').value = usuario.rol_id || '';
         document.getElementById('activo').checked = usuario.activo !== false;
-        
-        // Cambiar texto de ayuda para contraseña en edición
-        const passwordHelp = document.querySelector('.form-help');
-        if (passwordHelp) {
-            passwordHelp.textContent = 'Dejar vacío para mantener la contraseña actual';
-        }
     } else {
         formUsuario.reset();
         document.getElementById('activo').checked = true;
-        
-        // Cambiar texto de ayuda para contraseña en creación
-        const passwordHelp = document.querySelector('.form-help');
-        if (passwordHelp) {
-            passwordHelp.textContent = 'Mínimo 6 caracteres';
-        }
     }
     
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
 }
 
 function cerrarModal() {
