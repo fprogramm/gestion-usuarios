@@ -113,6 +113,13 @@ El sistema es compatible con cualquier servidor SMTP. Ajusta las variables:
 - Verifica que hayas ejecutado el script de seed
 - Confirma que el usuario existe en la tabla `usuarios`
 
+### Error: CSS no se carga (MIME type error)
+
+- Ejecuta `npm run build-css` antes de desplegar
+- Verifica que el archivo `public/styles.css` existe
+- En Vercel, revisa que el build se ejecute correctamente
+- El archivo `vercel.json` está configurado para servir CSS correctamente
+
 ### Emails no se envían
 
 - Revisa los logs de Vercel
@@ -124,6 +131,12 @@ El sistema es compatible con cualquier servidor SMTP. Ajusta las variables:
 - El sistema limita intentos por IP
 - En desarrollo local, usa diferentes navegadores o modo incógnito
 - En producción, el rate limiting es por IP real
+
+### Build de CSS falla
+
+- Ejecuta `npm run build-css` localmente para verificar
+- Asegúrate de que `src/input.css` existe
+- Verifica que Tailwind CSS esté instalado: `npm install`
 
 ## 📊 Monitoreo
 

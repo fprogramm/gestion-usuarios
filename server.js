@@ -88,6 +88,11 @@ app.get('*', (req, res) => {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   
+  // Si es un archivo estático que no existe, devolver 404
+  if (req.path.match(/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+    return res.status(404).send('File not found');
+  }
+  
   // Para cualquier otra ruta, servir la página principal
   res.sendFile(__dirname + '/public/index.html');
 });
