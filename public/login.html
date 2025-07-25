@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Gestión</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md mx-4">
+        <!-- Logo y título -->
+        <div class="text-center mb-8">
+            <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-2xl">🔐</span>
+            </div>
+            <h1 class="text-3xl font-light text-white mb-2">Sistema de Gestión</h1>
+            <p class="text-gray-400">Acceso seguro con token por email</p>
+        </div>
+
+        <!-- Formulario de solicitud de token -->
+        <div id="formSolicitarToken" class="bg-gray-800 rounded-lg p-6 shadow-xl">
+            <h2 class="text-xl font-semibold mb-6 text-center">Solicitar Acceso</h2>
+            
+            <form id="solicitudTokenForm">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                        Email registrado:
+                    </label>
+                    <input type="email" id="email" name="email" required 
+                           class="form-input" 
+                           placeholder="tu@email.com">
+                </div>
+                
+                <button type="submit" id="btnSolicitarToken" 
+                        class="btn btn-primary w-full">
+                    📧 Enviar Token por Email
+                </button>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-400">
+                    Se enviará un código de 6 dígitos a tu email
+                </p>
+            </div>
+        </div>
+
+        <!-- Formulario de verificación de token -->
+        <div id="formVerificarToken" class="bg-gray-800 rounded-lg p-6 shadow-xl" style="display: none;">
+            <h2 class="text-xl font-semibold mb-6 text-center">Verificar Token</h2>
+            
+            <div class="mb-4 p-4 bg-blue-900 border border-blue-600 rounded-lg">
+                <div class="flex items-center">
+                    <span class="text-blue-400 mr-2">📧</span>
+                    <div>
+                        <p class="text-sm text-blue-300">Token enviado a:</p>
+                        <p class="font-medium text-white" id="emailEnviado"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="verificacionTokenForm">
+                <div class="mb-4">
+                    <label for="token" class="block text-sm font-medium text-gray-300 mb-2">
+                        Código de 6 dígitos:
+                    </label>
+                    <input type="text" id="token" name="token" required 
+                           class="form-input text-center text-2xl font-mono tracking-widest" 
+                           placeholder="123456"
+                           maxlength="6"
+                           pattern="[0-9]{6}">
+                </div>
+                
+                <button type="submit" id="btnVerificarToken" 
+                        class="btn btn-primary w-full">
+                    🔓 Verificar y Acceder
+                </button>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <button id="btnVolverEmail" class="text-blue-400 hover:text-blue-300 text-sm">
+                    ← Cambiar email
+                </button>
+                <div class="mt-2">
+                    <p class="text-xs text-gray-400">
+                        El token expira en <span id="tiempoExpiracion" class="font-medium">15 minutos</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        <div id="mensajes" class="mt-4"></div>
+
+        <!-- Loading spinner -->
+        <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+            <div class="bg-gray-800 rounded-lg p-6 text-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                <p class="text-white">Procesando...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

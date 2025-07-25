@@ -16,6 +16,34 @@ CREATE TABLE IF NOT EXISTS usuarios (
   password_hash VARCHAR(255) NOT NULL,
   rol_id INTEGER REFERENCES roles(id) ON DELETE SET NULL,
   activo BOOLEAN DEFAULT true,
+  email_verificado BOOLEAN DEFAULT false,
+  ultimo_login TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Crear tabla de tokens de autenticación
+CREATE TABLE IF NOT EXISTS auth_tokens (
+  id SERIAL PRIMARY KEY,
+  usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+  token VARCHAR(255) NOT NULL UNIQUE,
+  tipo VARCHAR(50) NOT NULL, -- 'login', 'reset_password', 'email_verification'
+  expires_at TIMESTAMP NOT NULL,
+  usado BOOLEAN DEFAULT false,
+  ip_address INET,
+  user_agent TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Crear tabla de sesiones activas
+CREATE TABLE IF NOT EXISTS sesiones (
+  id SERIAL PRIMARY KEY,
+  usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+  jwt_token_hash VARCHAR(255) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  ip_address INET,
+  user_agent TEXT,
+  activa BOOLEAN DEFAULT true,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -24,6 +52,19 @@ CREATE TABLE IF NOT EXISTS usuarios (
 CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
 CREATE INDEX IF NOT EXISTS idx_usuarios_rol_id ON usuarios(rol_id);
 CREATE INDEX IF NOT EXISTS idx_usuarios_activo ON usuarios(activo);
+CREATE INDEX IF NOT EXISTS idx_usuarios_email_verificado ON usuarios(email_verificado);
+
+-- Índices para auth_tokens
+CREATE INDEX IF NOT EXISTS idx_auth_tokens_token ON auth_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_auth_tokens_usuario_id ON auth_tokens(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_auth_tokens_expires_at ON auth_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_auth_tokens_tipo ON auth_tokens(tipo);
+
+-- Índices para sesiones
+CREATE INDEX IF NOT EXISTS idx_sesiones_usuario_id ON sesiones(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_sesiones_jwt_token_hash ON sesiones(jwt_token_hash);
+CREATE INDEX IF NOT EXISTS idx_sesiones_expires_at ON sesiones(expires_at);
+CREATE INDEX IF NOT EXISTS idx_sesiones_activa ON sesiones(activa);
 
 -- Insertar roles por defecto
 INSERT INTO roles (nombre, descripcion) VALUES 

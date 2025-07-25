@@ -27,8 +27,125 @@ selectAll.addEventListener('change', seleccionarTodos);
 
 // Inicialización
 async function inicializar() {
+    if (!await verificarAutenticacion()) {
+        window.location.href = '/login.html';
+        return;
+    }
+    
+    mostrarInfoUsuario();
     await cargarRoles();
     await cargarUsuarios();
+}
+
+// Verificar autenticación
+async function verificarAutenticacion() {
+    const token = localStorage.getItem('authToken');
+    if (!token) return false;
+
+    try {
+        const response = await fetch('/api/auth/estado', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('usuario', JSON.stringify(data.usuario));
+            return true;
+        } else {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('usuario');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('usuario');
+        return false;
+    }
+}
+
+// Mostrar información del usuario logueado
+function mostrarInfoUsuario() {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    
+    // Crear barra de usuario
+    const header = document.querySelector('header');
+    const userBar = document.createElement('div');
+    userBar.className = 'flex justify-between items-center mt-4 p-4 bg-gray-800 rounded-lg';
+    userBar.innerHTML = `
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                <span class="text-white font-semibold">${usuario.nombre?.charAt(0) || 'U'}</span>
+            </div>
+            <div>
+                <p class="text-white font-medium">${usuario.nombre} ${usuario.apellido}</p>
+                <p class="text-gray-400 text-sm">${usuario.rol} • ${usuario.email}</p>
+            </div>
+        </div>
+        <button id="btnCerrarSesion" class="btn btn-secondary text-sm">
+            🚪 Cerrar Sesión
+        </button>
+    `;
+    
+    header.appendChild(userBar);
+    
+    // Event listener para cerrar sesión
+    document.getElementById('btnCerrarSesion').addEventListener('click', cerrarSesion);
+}
+
+// Cerrar sesión
+async function cerrarSesion() {
+    const token = localStorage.getItem('authToken');
+    
+    try {
+        await fetch('/api/auth/cerrar-sesion', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    } catch (error) {
+        console.error('Error cerrando sesión:', error);
+    } finally {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('usuario');
+        window.location.href = '/login.html';
+    }
+}
+
+// Función helper para hacer requests autenticadas
+async function fetchAutenticado(url, options = {}) {
+    const token = localStorage.getItem('authToken');
+    
+    const defaultOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    };
+    
+    const mergedOptions = {
+        ...defaultOptions,
+        ...options,
+        headers: {
+            ...defaultOptions.headers,
+            ...options.headers
+        }
+    };
+    
+    const response = await fetch(url, mergedOptions);
+    
+    // Si el token expiró, redirigir al login
+    if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('usuario');
+        window.location.href = '/login.html';
+        return;
+    }
+    
+    return response;
 }
 
 // Cerrar modal
@@ -40,7 +157,8 @@ window.addEventListener('click', (e) => {
 // Cargar roles para el select
 async function cargarRoles() {
     try {
-        const response = await fetch('/api/roles');
+        const response = await fetchAutenticado('/api/roles');
+        if (!response) return;
         roles = await response.json();
         llenarSelectRoles();
     } catch (error) {
@@ -64,7 +182,8 @@ function llenarSelectRoles() {
 // Funciones principales
 async function cargarUsuarios() {
     try {
-        const response = await fetch('/api/usuarios');
+        const response = await fetchAutenticado('/api/usuarios');
+        if (!response) return;
         usuarios = await response.json();
         renderizarTabla();
     } catch (error) {
@@ -77,7 +196,8 @@ async function buscarUsuarios() {
     try {
         const search = searchInput.value.trim();
         const url = search ? `/api/usuarios?search=${encodeURIComponent(search)}` : '/api/usuarios';
-        const response = await fetch(url);
+        const response = await fetchAutenticado(url);
+        if (!response) return;
         usuarios = await response.json();
         renderizarTabla();
     } catch (error) {
@@ -216,11 +336,8 @@ async function guardarUsuario(e) {
             body.password = password;
         }
         
-        const response = await fetch(url, {
+        const response = await fetchAutenticado(url, {
             method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(body)
         });
         
@@ -244,19 +361,22 @@ async function eliminarUsuario(id) {
     }
     
     try {
-        const response = await fetch(`/api/usuarios/${id}`, {
+        const response = await fetchAutenticado(`/api/usuarios/${id}`, {
             method: 'DELETE'
         });
+        
+        if (!response) return;
         
         if (response.ok) {
             cargarUsuarios();
             alert('Usuario eliminado correctamente');
         } else {
-            throw new Error('Error al eliminar usuario');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al eliminar usuario');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al eliminar el usuario');
+        alert('Error al eliminar el usuario: ' + error.message);
     }
 }
 
@@ -315,23 +435,23 @@ async function eliminarSeleccionados() {
     }
     
     try {
-        const response = await fetch('/api/usuarios', {
+        const response = await fetchAutenticado('/api/usuarios', {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({ ids })
         });
+        
+        if (!response) return;
         
         if (response.ok) {
             cargarUsuarios();
             selectAll.checked = false;
             alert('Usuarios eliminados correctamente');
         } else {
-            throw new Error('Error al eliminar usuarios');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al eliminar usuarios');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al eliminar los usuarios seleccionados');
+        alert('Error al eliminar los usuarios seleccionados: ' + error.message);
     }
 }
