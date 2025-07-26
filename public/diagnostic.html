@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Sistema de Gestión</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-light text-white mb-2">🔧 Diagnóstico del Sistema</h1>
+                <p class="text-gray-400">Herramientas para verificar el funcionamiento en producción</p>
+            </div>
+
+            <!-- Verificar Email -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl mb-6">
+                <h2 class="text-xl font-semibold mb-4">📧 Verificar Configuración de Email</h2>
+                
+                <div class="mb-4">
+                    <label for="testEmail" class="block text-sm font-medium text-gray-300 mb-2">
+                        Email para prueba:
+                    </label>
+                    <input type="email" id="testEmail" 
+                           class="form-input" 
+                           placeholder="soporte.liborina@gmail.com">
+                </div>
+                
+                <button id="btnTestEmail" class="btn btn-primary">
+                    🧪 Probar Envío de Email
+                </button>
+                
+                <div id="emailResults" class="mt-4"></div>
+            </div>
+
+            <!-- Verificar Logs -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl mb-6">
+                <h2 class="text-xl font-semibold mb-4">📊 Información del Sistema</h2>
+                
+                <button id="btnCheckLogs" class="btn btn-secondary">
+                    📋 Obtener Info del Sistema
+                </button>
+                
+                <div id="logsResults" class="mt-4"></div>
+            </div>
+
+            <!-- Probar Login -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl mb-6">
+                <h2 class="text-xl font-semibold mb-4">🔐 Probar Login Completo</h2>
+                
+                <div class="mb-4">
+                    <label for="loginEmail" class="block text-sm font-medium text-gray-300 mb-2">
+                        Email de usuario:
+                    </label>
+                    <input type="email" id="loginEmail" 
+                           class="form-input" 
+                           placeholder="soporte.liborina@gmail.com">
+                </div>
+                
+                <button id="btnTestLogin" class="btn btn-success">
+                    🚀 Probar Login
+                </button>
+                
+                <div id="loginResults" class="mt-4"></div>
+            </div>
+
+            <!-- Instrucciones -->
+            <div class="bg-blue-900 border border-blue-600 rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-3">💡 Instrucciones</h3>
+                <ul class="space-y-2 text-sm text-blue-300">
+                    <li>• Esta página solo funciona si estás logueado como administrador</li>
+                    <li>• Los resultados aparecerán en esta página y en los logs de Vercel</li>
+                    <li>• Si el email no funciona, revisa las variables de entorno en Vercel</li>
+                    <li>• En modo demo, los tokens aparecen en los logs del servidor</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="diagnostic.js"></script>
+</body>
+</html>

@@ -8,6 +8,7 @@ const rolController = require('./src/controllers/rolController');
 const authController = require('./src/controllers/authController');
 const empresaController = require('./src/controllers/empresaController');
 const clienteController = require('./src/controllers/clienteController');
+const diagnosticController = require('./src/controllers/diagnosticController');
 
 // Importar middleware
 const { verificarAuth, verificarAdmin, verificarAdminOEditor } = require('./src/middleware/authMiddleware');
@@ -70,6 +71,10 @@ app.delete('/api/clientes', verificarAuth, verificarAdmin, clienteController.eli
 app.get('/api/health', (req, res) => {
   res.json({ message: 'API funcionando correctamente', timestamp: new Date().toISOString() });
 });
+
+// Rutas de diagnóstico (solo admin)
+app.post('/api/diagnostic/email', verificarAuth, verificarAdmin, diagnosticController.verificarEmail);
+app.get('/api/diagnostic/logs', verificarAuth, verificarAdmin, diagnosticController.verificarLogs);
 
 // Ruta para servir la página principal (dashboard)
 app.get('/', (req, res) => {

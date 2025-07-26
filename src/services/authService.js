@@ -44,6 +44,8 @@ class AuthService {
   // Solicitar token de login por email
   async solicitarTokenLogin(email, ipAddress, userAgent) {
     try {
+      console.log(`🔍 Solicitando token para: ${email}`);
+      
       // Verificar si el usuario existe y está activo
       const { data: usuario, error: userError } = await supabase
         .from('usuarios')
@@ -60,8 +62,11 @@ class AuthService {
         .single();
 
       if (userError || !usuario) {
+        console.log(`❌ Usuario no encontrado: ${email}`);
         throw new Error('Usuario no encontrado o inactivo');
       }
+
+      console.log(`✅ Usuario encontrado: ${usuario.nombre} ${usuario.apellido}`);
 
       // Invalidar tokens anteriores del mismo tipo
       await supabase
@@ -90,16 +95,21 @@ class AuthService {
       if (tokenError) throw tokenError;
 
       // Enviar token por email
+      console.log(`📧 Enviando token por email...`);
       const emailResult = await emailService.enviarTokenLogin(
         email, 
         token, 
         `${usuario.nombre} ${usuario.apellido}`
       );
 
+      console.log(`📧 Resultado del envío:`, emailResult);
+
       if (!emailResult.success) {
+        console.log(`❌ Error enviando email: ${emailResult.message}`);
         throw new Error('Error al enviar email: ' + emailResult.message);
       }
 
+      console.log(`✅ Token enviado exitosamente`);
       return {
         success: true,
         message: 'Token enviado al email correctamente',
